@@ -1,6 +1,9 @@
+using UnityEngine;
+
 namespace BehaviourTree
 {
-    public abstract class Node
+    [CreateAssetMenu(menuName = "Create Node", fileName = "Node", order = 0)]
+    public abstract class Node : ScriptableObject
     {
         public enum State
         {
@@ -9,7 +12,7 @@ namespace BehaviourTree
             Running
         }
         
-        protected State state;
+        public State state = State.Running;
         private bool isStarted;
 
         public State Update()

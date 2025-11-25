@@ -18,7 +18,7 @@ namespace BehaviourTree
 
         protected override void OnStop()
         {
-            
+            Debug.Log("Debug Node (message) [OnStop]: " + message);
         }
 
         protected override State OnUpdate()

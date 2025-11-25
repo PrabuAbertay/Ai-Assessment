@@ -2,11 +2,13 @@ using UnityEngine;
 
 namespace BehaviourTree
 {
-    public class RootNode : Node
+    public class DelayNode : ActionNode
     {
-        public Node child;
+        public float delay = 1;
+        private float startTime;
         protected override void OnStart()
         {
+            startTime = Time.time;
         }
 
         protected override void OnStop()
@@ -15,7 +17,7 @@ namespace BehaviourTree
 
         protected override State OnUpdate()
         {
-            return child.Update();
+            return Time.time - startTime > delay ? State.Success : State.Running;
         }
     }
 }

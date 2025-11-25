@@ -5,6 +5,6 @@ namespace BehaviourTree
 {
     public abstract class CompositeNode : Node
     {
-        [HideInInspector]protected List<Node> children = new List<Node>();
+        [HideInInspector]public List<Node> children = new List<Node>();
     }
 }
