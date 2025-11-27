@@ -14,6 +14,7 @@ namespace BehaviourTree
         
         public State state = State.Running;
         private bool isStarted;
+        public BlackBoard blackBoard;   
 
         public State Update()
         {

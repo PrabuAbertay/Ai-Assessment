@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Gameplay;
 using UnityEngine;
 
 namespace BehaviourTree
@@ -9,7 +11,24 @@ namespace BehaviourTree
         public Node.State treeState;
     
         public List<Node> nodes = new List<Node>();
-        public BlackBoard blackBoard = new BlackBoard();
+        public BlackBoard blackBoard;
+        
+        [SerializeField] AiAgent_BT aiAgentBT;
+        [SerializeField] FoodSpawner foodSpawner;
+
+        private void OnValidate()
+        {
+            if(aiAgentBT == null) aiAgentBT = GetComponent<AiAgent_BT>();
+        }
+
+        private void Awake()
+        {
+            blackBoard = new BlackBoard()
+            {
+                agent_BT = aiAgentBT,
+                foodSpawner = foodSpawner
+            };
+        }
 
         private void Start()
         {
@@ -48,6 +67,37 @@ namespace BehaviourTree
                 treeState = rootNode.Update();
             }
             return treeState;
+        }
+        public List<Node> GetChildren(Node parent)
+        {
+            var children = new List<Node>();
+            var decorator = parent as Decorator;
+            if (decorator != null && decorator.child != null)  
+            {
+                children.Add(decorator.child);
+            }
+            var root = parent as RootNode;
+            if (root != null && root.child != null)  
+            {
+                children.Add(root.child);
+            }
+            var composite = parent as CompositeNode;
+            return composite != null ? composite.children : children;
+        }
+        void TraverseTree(Node node , Action<Node> action)
+        {
+            if(node == null)return;
+            action.Invoke(node);
+            var children = GetChildren(node);
+            children.ForEach(child => TraverseTree(child, action));
+        }
+        public void Bind(BlackBoard blackBoard)
+        {
+            this.blackBoard = blackBoard;
+            TraverseTree(rootNode, node =>
+            {
+                node.blackBoard = blackBoard;
+            });
         }
     }
 }
