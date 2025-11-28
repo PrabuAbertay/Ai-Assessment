@@ -8,21 +8,20 @@ namespace BehaviourTree
     public class BehaviourTree : MonoBehaviour
     {
         Node rootNode;
-        public Node.State treeState;
+        public Node.State treeState = Node.State.Running;
     
         public List<Node> nodes = new List<Node>();
         public BlackBoard blackBoard;
         
-        [SerializeField] AiAgent_BT aiAgentBT;
-        [SerializeField] FoodSpawner foodSpawner;
+        FoodSpawner foodSpawner;
+        AiAgent_BT aiAgentBT;
+        
 
-        private void OnValidate()
-        {
-            if(aiAgentBT == null) aiAgentBT = GetComponent<AiAgent_BT>();
-        }
 
-        private void Awake()
+        public void Init(FoodSpawner foodSpawner1, AiAgent_BT agent)
         {
+            aiAgentBT = agent;  
+            foodSpawner = foodSpawner1;
             blackBoard = new BlackBoard()
             {
                 agent_BT = aiAgentBT,
@@ -32,27 +31,40 @@ namespace BehaviourTree
 
         private void Start()
         {
+            var isInFoodAvailableArea = ScriptableObject.CreateInstance<IsInFoodAvailableArea>();   
+            var isFoodAvailableInArea = ScriptableObject.CreateInstance<IsFoodAvailableInArea>();
+            var getClosestFood = ScriptableObject.CreateInstance<GetClosestFoodInArea>();
+            var moveToFood = ScriptableObject.CreateInstance<MoveToNextTarget>();
+            var consumeFood = ScriptableObject.CreateInstance<ConsumeFood>();
+            
+            var getClosestFoodArea = ScriptableObject.CreateInstance<GetClosestFoodArea>();
+            var moveToFoodArea = ScriptableObject.CreateInstance<MoveToNextTarget>();
+            
+            var insideFoodAreaSeq = ScriptableObject.CreateInstance<SequenceNode>();
+            
+            insideFoodAreaSeq.children.Add(isInFoodAvailableArea);
+            insideFoodAreaSeq.children.Add(isFoodAvailableInArea);
+            insideFoodAreaSeq.children.Add(getClosestFood);
+            insideFoodAreaSeq.children.Add(moveToFood);
+            insideFoodAreaSeq.children.Add(consumeFood);
+            
             var log = ScriptableObject.CreateInstance<DebugNode>();
-            log.Message = "Hello World! - 1";
+            log.Message = "Is not in food area--";
             
-            var log2 = ScriptableObject.CreateInstance<DebugNode>();
-            log2.Message = "Hello World! - 2";
+            var outsideFoodAreaSeq = ScriptableObject.CreateInstance<SequenceNode>();
+            outsideFoodAreaSeq.children.Add(log);
+            outsideFoodAreaSeq.children.Add(getClosestFoodArea);
+            outsideFoodAreaSeq.children.Add(moveToFoodArea);
             
-            var delay = ScriptableObject.CreateInstance<DelayNode>();
-            var delay2 = ScriptableObject.CreateInstance<DelayNode>();
+            var selector = ScriptableObject.CreateInstance<SelectorNode>();
+            selector.children.Add(insideFoodAreaSeq);   
+            selector.children.Add(outsideFoodAreaSeq);   
             
+            var repeatNode = ScriptableObject.CreateInstance<RepeatNode>();
+            repeatNode.child = selector;
             
-            var sequence = ScriptableObject.CreateInstance<SequenceNode>();
-            sequence.children.Add(log);
-            sequence.children.Add(delay);
-            sequence.children.Add(log2);
-            sequence.children.Add(delay2);
-            
-            
-            var loop = ScriptableObject.CreateInstance<RepeatNode>();
-            loop.child = sequence;
-            
-            rootNode = loop;
+            rootNode = repeatNode;
+            Bind(blackBoard);
         }
 
         private void Update()
@@ -60,7 +72,7 @@ namespace BehaviourTree
             UpdateTree();
         }
 
-        public Node.State UpdateTree()
+        private Node.State UpdateTree()
         {
             if (rootNode.state == Node.State.Running)
             {
@@ -68,7 +80,8 @@ namespace BehaviourTree
             }
             return treeState;
         }
-        public List<Node> GetChildren(Node parent)
+
+        private List<Node> GetChildren(Node parent)
         {
             var children = new List<Node>();
             var decorator = parent as Decorator;
@@ -91,7 +104,8 @@ namespace BehaviourTree
             var children = GetChildren(node);
             children.ForEach(child => TraverseTree(child, action));
         }
-        public void Bind(BlackBoard blackBoard)
+
+        private void Bind(BlackBoard blackBoard)
         {
             this.blackBoard = blackBoard;
             TraverseTree(rootNode, node =>

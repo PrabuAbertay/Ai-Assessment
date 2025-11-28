@@ -8,7 +8,7 @@ namespace BehaviourTree
 
         protected override void OnStart()
         {
-            target = blackBoard.agent_BT.CurrentFoodSpawnArea.transform;
+            target = blackBoard.agent_BT.CurrentMoveToTarget;
             blackBoard.agent_BT.CurrentMoveToTarget = target;
             blackBoard.agent_BT.MoveToTarget();
         }

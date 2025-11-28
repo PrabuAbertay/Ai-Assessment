@@ -10,6 +10,8 @@ namespace Gameplay
         [SerializeField] BoxCollider collider;
 
         List<Food> foods = new List<Food>();
+        private AiAgent_BT aiAgent;
+
         private void OnValidate()
         {
             if(collider == null) collider = GetComponent<BoxCollider>();
@@ -22,29 +24,29 @@ namespace Gameplay
             {
                 var xPos = UnityEngine.Random.Range(collider.bounds.min.x, collider.bounds.max.x);
                 var zPos = UnityEngine.Random.Range(collider.bounds.min.z, collider.bounds.max.z);
-                Debug.Log($"[GetRandomPoints] xpos : {xPos}, ypos : {zPos}");
+                // Debug.Log($"[GetRandomPoints] xpos : {xPos}, ypos : {zPos}");
                 points.Add((xPos, zPos));
             }
             
             return points;
         }
 
-        public bool Contains(Vector3 position)
+        public bool Contains(AiAgent_BT agent)
         {
-            return collider.bounds.Contains(position);
+            Debug.Log($"aiAgent == null : {aiAgent == null}, agent name : {aiAgent.name}");
+            if(aiAgent == null) return false;
+            return aiAgent == agent;
         }
 
         public void SpawnFood(int count, Food food)
         {
-            for (int i = 0; i < count; i++)
+            var points = GetRandomPoints(count);
+            foreach ((float, float) point in points)
             {
-                var points = GetRandomPoints(5);
-                foreach ((float, float) point in points)
-                {
-                    var c = Instantiate(food);     
-                    c.transform.position = new Vector3(point.Item1, c.transform.position.y, point.Item2);
-                    foods.Add(c);
-                }
+                var c = Instantiate(food);
+                c.name = $"Food {point}";
+                c.transform.position = new Vector3(point.Item1, c.transform.position.y, point.Item2);
+                foods.Add(c);
             }
         }
 
@@ -64,16 +66,35 @@ namespace Gameplay
 
         public void OnFoodConsumed(Food food)
         {
+            Food foodToConsume = null;
             foreach (var f in foods.ToList().Where(f => f == food))
             {
-                f.Consumed();
-                foods.Remove(f);
+                foodToConsume = f;
             }
+            if(foodToConsume == null) return;
+            foodToConsume.Consumed();
+            foods.Remove(foodToConsume);
         }
 
         public bool IsFoodAvailable()
         {
             return foods.Count > 0;
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("AiAgent"))
+            {
+                aiAgent = other.GetComponent<AiAgent_BT>();
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.CompareTag("AiAgent"))
+            {
+                aiAgent = null;
+            }
         }
     }
 }

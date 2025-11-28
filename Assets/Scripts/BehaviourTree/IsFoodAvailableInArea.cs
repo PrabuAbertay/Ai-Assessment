@@ -1,10 +1,13 @@
+using UnityEngine;
+
 namespace BehaviourTree
 {
     public class IsFoodAvailableInArea : ActionNode
     {
         protected override void OnStart()
         {
-            
+            Debug.Log("[IsFoodAvailableInArea] OnStart ");
+
         }
 
         protected override void OnStop()

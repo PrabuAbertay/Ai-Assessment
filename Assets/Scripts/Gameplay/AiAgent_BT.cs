@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using Gameplay;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,29 +13,29 @@ public class AiAgent_BT : MonoBehaviour
     private Food closestFood;
     private Transform currentMoveToTarget;
     
+    [SerializeField]BehaviourTree.BehaviourTree behaviourTree;
     [SerializeField] NavMeshAgent navMeshAgent;
 
     public Transform CurrentMoveToTarget
     {
+        get => currentMoveToTarget;
         set => currentMoveToTarget = value;
     }
-    
+
     public FoodSpawnArea CurrentFoodSpawnArea => currentFoodSpawnArea;
     public Food ClosestFood => closestFood;
+    public NavMeshAgent NavMeshAgent => navMeshAgent;
 
     private void OnValidate()
     {
         if(navMeshAgent == null) navMeshAgent = GetComponent<NavMeshAgent>();
+        if(behaviourTree == null) behaviourTree = GetComponent<BehaviourTree.BehaviourTree>();
     }
 
     public void Init(FoodSpawner foodSpawner)
     {
         this.foodSpawner = foodSpawner;
-    }
-
-    public bool IsInFoodAvailableArea()
-    {
-        return (foodSpawner.IsInFoodAvailableArea(transform.position, out currentFoodSpawnArea));
+        behaviourTree.Init(foodSpawner, this);
     }
 
     public void SetCurrentFoodSpawnArea(FoodSpawnArea newArea)
@@ -72,8 +73,7 @@ public class AiAgent_BT : MonoBehaviour
             return;
         }
         navMeshAgent.isStopped = false;
-        navMeshAgent.SetDestination(currentMoveToTarget.position);
-        navMeshAgent.isStopped = true;
+        navMeshAgent.destination = (currentMoveToTarget.position);
     }
 
     public bool IsMovingToTarget()

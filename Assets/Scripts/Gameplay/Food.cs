@@ -7,6 +7,7 @@ namespace Gameplay
         public void Consumed()
         {
             UnityEngine.Debug.Log("Food Consumed");
+            gameObject.SetActive(false);
         }
     }
 }

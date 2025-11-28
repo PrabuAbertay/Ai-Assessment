@@ -1,4 +1,5 @@
 using Gameplay;
+using UnityEngine;
 
 namespace BehaviourTree
 {
@@ -7,17 +8,17 @@ namespace BehaviourTree
         FoodSpawnArea foodSpawnArea;     
         protected override void OnStart()
         {
+            Debug.Log("[IsInFoodAvailableArea] OnStart ");
             foodSpawnArea = null;
         }
 
         protected override void OnStop()
         {
-            throw new System.NotImplementedException();
         }
 
         protected override State OnUpdate()
         {
-            if (blackBoard.foodSpawner.IsInFoodAvailableArea(blackBoard.agent_BT.GetPosition(), out foodSpawnArea))
+            if (blackBoard.foodSpawner.IsInFoodAvailableArea(blackBoard.agent_BT, out foodSpawnArea))
             {
                 blackBoard.agent_BT.SetCurrentFoodSpawnArea(foodSpawnArea);
                 return State.Success;

@@ -10,9 +10,9 @@ namespace Gameplay
     {
         [FormerlySerializedAs("foodSpawnArea")] [SerializeField] private List<FoodSpawnArea> foodSpawnAreas;
         [SerializeField] Food foodPrefab;
-        private int maxFoodCountByArea = 5;
+        [SerializeField]private int maxFoodCountByArea = 1;
 
-        private void Start()
+        private void Awake()
         {
             foreach (var spawnArea in foodSpawnAreas)
             {
@@ -20,13 +20,14 @@ namespace Gameplay
             }
         }
 
-        public bool IsInFoodAvailableArea(Vector3 position, out FoodSpawnArea foodSpawnArea)
+        public bool IsInFoodAvailableArea(AiAgent_BT agent, out FoodSpawnArea foodSpawnArea)
         {
-            foreach (var spawnArea in foodSpawnAreas.Where(spawnArea => spawnArea.Contains(position)))
+            foreach (var spawnArea in foodSpawnAreas.Where(spawnArea => spawnArea.Contains(agent)))
             {
+                Debug.Log($"[FoodSpawner] IsInFoodAvailableArea : {spawnArea.name}");
                 foodSpawnArea = spawnArea;
                 return true;
-            }
+            } 
             foodSpawnArea = null;
             return false;
         }

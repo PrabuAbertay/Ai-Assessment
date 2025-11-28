@@ -9,6 +9,7 @@ namespace BehaviourTree
 
         protected override void OnStart()
         {
+            Debug.Log("[GetClosestFoodInArea] OnStart ");
             food = blackBoard.agent_BT.CurrentFoodSpawnArea.GetClosestFood(blackBoard.agent_BT.GetPosition());
         }
 
@@ -24,6 +25,7 @@ namespace BehaviourTree
                 return State.Failure;
             }
             blackBoard.agent_BT.SetClosestFood(food);
+            blackBoard.agent_BT.CurrentMoveToTarget = (food.transform);
             return State.Success;
         }
     }
