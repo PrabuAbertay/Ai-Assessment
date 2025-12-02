@@ -20,8 +20,8 @@ namespace BehaviourTree
             if (foodSpawnArea != null)
             {
                 blackBoard.agent_BT.SetCurrentFoodSpawnArea(foodSpawnArea);
-                blackBoard.agent_BT.CurrentMoveToTarget = (foodSpawnArea.transform);
-                Debug.Log($"Got next food area : {blackBoard.agent_BT.CurrentMoveToTarget.name}");
+                blackBoard.agent_BT.CurrentMoveToPosition = (foodSpawnArea.GetClosestPointInArea(blackBoard.agent_BT.GetPosition()));
+                // Debug.Log($"Got next food area : {blackBoard.agent_BT.CurrentMoveToTarget.name}");
                 return State.Success;
             }
 

@@ -10,7 +10,7 @@ namespace Gameplay
         [SerializeField] BoxCollider collider;
 
         List<Food> foods = new List<Food>();
-        private AiAgent_BT aiAgent;
+        [SerializeField]private AiAgent_BT aiAgent;
 
         private void OnValidate()
         {
@@ -33,7 +33,7 @@ namespace Gameplay
 
         public bool Contains(AiAgent_BT agent)
         {
-            Debug.Log($"aiAgent == null : {aiAgent == null}, agent name : {aiAgent.name}");
+            // Debug.Log($"aiAgent == null : {aiAgent == null}, agent name : {aiAgent.name}");
             if(aiAgent == null) return false;
             return aiAgent == agent;
         }
@@ -95,6 +95,11 @@ namespace Gameplay
             {
                 aiAgent = null;
             }
+        }
+
+        public Vector3 GetClosestPointInArea(Vector3 position)
+        {
+            return collider.ClosestPoint(position);
         }
     }
 }

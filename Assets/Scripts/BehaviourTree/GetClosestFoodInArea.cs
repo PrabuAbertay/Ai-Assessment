@@ -25,7 +25,7 @@ namespace BehaviourTree
                 return State.Failure;
             }
             blackBoard.agent_BT.SetClosestFood(food);
-            blackBoard.agent_BT.CurrentMoveToTarget = (food.transform);
+            blackBoard.agent_BT.CurrentMoveToPosition = (food.GetPosition());
             return State.Success;
         }
     }

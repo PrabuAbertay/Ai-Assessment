@@ -9,5 +9,10 @@ namespace Gameplay
             UnityEngine.Debug.Log("Food Consumed");
             gameObject.SetActive(false);
         }
+
+        public Vector3 GetPosition()
+        {
+            return transform.position;
+        }
     }
 }

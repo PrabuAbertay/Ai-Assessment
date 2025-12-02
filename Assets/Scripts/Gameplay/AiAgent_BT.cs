@@ -12,6 +12,7 @@ public class AiAgent_BT : MonoBehaviour
     FoodSpawnArea currentFoodSpawnArea;
     private Food closestFood;
     private Transform currentMoveToTarget;
+    private Vector3 currentMoveToPosition;
     
     [SerializeField]BehaviourTree.BehaviourTree behaviourTree;
     [SerializeField] NavMeshAgent navMeshAgent;
@@ -20,6 +21,12 @@ public class AiAgent_BT : MonoBehaviour
     {
         get => currentMoveToTarget;
         set => currentMoveToTarget = value;
+    }
+    
+    public Vector3 CurrentMoveToPosition
+    {
+        get => currentMoveToPosition;
+        set => currentMoveToPosition= value;
     }
 
     public FoodSpawnArea CurrentFoodSpawnArea => currentFoodSpawnArea;

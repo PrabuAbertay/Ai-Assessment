@@ -133,11 +133,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6768545521033973764, guid: 4c3fdcc4b1541dd44870652bd049c00b, type: 3}
       propertyPath: m_AutoBraking
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6768545521033973764, guid: 4c3fdcc4b1541dd44870652bd049c00b, type: 3}
       propertyPath: m_StoppingDistance
-      value: 0.3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8116304966261348241, guid: 4c3fdcc4b1541dd44870652bd049c00b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -339,7 +339,7 @@ MonoBehaviour:
   - {fileID: 1361512404}
   - {fileID: 940014644}
   foodPrefab: {fileID: 4204678483004921652, guid: f96af8607da531e43ba526817a0bff64, type: 3}
-  maxFoodCountByArea: 1
+  maxFoodCountByArea: 5
 --- !u!4 &441802657
 Transform:
   m_ObjectHideFlags: 0
