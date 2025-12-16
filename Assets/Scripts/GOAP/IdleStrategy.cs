@@ -1,3 +1,5 @@
+using System;
+
 namespace GOAP
 {
     public class IdleStrategy : IActionStrategy
@@ -8,9 +10,11 @@ namespace GOAP
         
         float currentTime = 0;
         float idleDuration = 0;
-        public IdleStrategy(int duration)
+        event Action OnComplete; 
+        public IdleStrategy(int duration, Action onComplete)
         {
             idleDuration = duration;
+            OnComplete = onComplete;
         }
 
         public void Start()
@@ -21,6 +25,7 @@ namespace GOAP
         {
             if (currentTime >= idleDuration)
             {
+                OnComplete?.Invoke();   
                 complete = true;
             }
             else

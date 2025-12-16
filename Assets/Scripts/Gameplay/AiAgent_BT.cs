@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using Gameplay;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
@@ -13,9 +14,15 @@ public class AiAgent_BT : MonoBehaviour
     private Food closestFood;
     private Transform currentMoveToTarget;
     private Vector3 currentMoveToPosition;
-    
+    [SerializeField]private int health = 100, stamina = 100;
     [SerializeField]BehaviourTree.BehaviourTree behaviourTree;
     [SerializeField] NavMeshAgent navMeshAgent;
+    [SerializeField] private Transform hideOut;
+    private float statUpdateInterval = 1f;
+    private float currentIntervalTime;
+
+    public Transform Hideout => hideOut;
+    public int WanderRadius { get; } = 20;
 
     public Transform CurrentMoveToTarget
     {
@@ -29,6 +36,8 @@ public class AiAgent_BT : MonoBehaviour
         set => currentMoveToPosition= value;
     }
 
+    public int Health => health;
+    public int Stamina => stamina;
     public FoodSpawnArea CurrentFoodSpawnArea => currentFoodSpawnArea;
     public Food ClosestFood => closestFood;
     public NavMeshAgent NavMeshAgent => navMeshAgent;
@@ -43,6 +52,18 @@ public class AiAgent_BT : MonoBehaviour
     {
         this.foodSpawner = foodSpawner;
         behaviourTree.Init(foodSpawner, this);
+    }
+
+    private void Start()
+    {
+        currentIntervalTime = Time.time;    
+    }
+
+    private void Update()
+    {
+        if (!(Time.time - currentIntervalTime >= statUpdateInterval)) return;
+        UpdateStats();
+        currentIntervalTime = Time.time;
     }
 
     public void SetCurrentFoodSpawnArea(FoodSpawnArea newArea)
@@ -112,5 +133,22 @@ public class AiAgent_BT : MonoBehaviour
     public Vector3 GetPosition()
     {
         return transform.position;
+    }
+
+    public void UpdateStats()
+    {
+        AddHealth(-5);
+        AddStamina(-5);
+    }
+    
+    public void AddHealth(int value)
+    {
+        health += value;
+        health = math.clamp(health, 0, 100);
+    }
+    public void AddStamina(int value)
+    {
+        stamina += value;
+        stamina = math.clamp(stamina, 0, 100);
     }
 }

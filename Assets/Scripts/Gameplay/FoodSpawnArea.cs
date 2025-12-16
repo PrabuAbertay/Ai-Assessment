@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Gameplay
@@ -15,11 +16,6 @@ namespace Gameplay
         private void OnValidate()
         {
             if(collider == null) collider = GetComponent<BoxCollider>();
-        }
-
-        private void Start()
-        {
-            UnityEngine.Debug.Log($" Name: {gameObject.name}, extends --------- {collider.bounds.extents.x}, {collider.bounds.extents.y}, {collider.bounds.extents.z}");
         }
 
         public List<(float,float)> GetRandomPoints(int count)
@@ -61,6 +57,7 @@ namespace Gameplay
             Food closestFood = null;    
             foreach (var food in foods)
             {
+                if(food.consumed) continue;
                 var dist = Vector3.Distance(position, food.transform.position);
                 if (!(dist < closestDistance)) continue;
                 closestDistance = dist; 
@@ -83,7 +80,8 @@ namespace Gameplay
 
         public bool IsFoodAvailable()
         {
-            return foods.Count > 0;
+            var availableFood = new List<Food>(foods).Where(f => !f.consumed).ToList();   
+            return availableFood.Count > 0;
         }
 
         private void OnTriggerEnter(Collider other)

@@ -31,11 +31,15 @@ namespace BehaviourTree
 
         private void Start()
         {
+            var updateStats = ScriptableObject.CreateInstance<UpdateStats>();
+            
+            var isHungry = ScriptableObject.CreateInstance<IsHungry>();
             var isInFoodAvailableArea = ScriptableObject.CreateInstance<IsInFoodAvailableArea>();   
             var isFoodAvailableInArea = ScriptableObject.CreateInstance<IsFoodAvailableInArea>();
             var getClosestFood = ScriptableObject.CreateInstance<GetClosestFoodInArea>();
             var moveToFood = ScriptableObject.CreateInstance<MoveToNextTarget>();
             var consumeFood = ScriptableObject.CreateInstance<ConsumeFood>();
+            consumeFood.duration = 2;
             
             var getClosestFoodArea = ScriptableObject.CreateInstance<GetClosestFoodArea>();
             var moveToFoodArea = ScriptableObject.CreateInstance<MoveToNextTarget>();
@@ -56,12 +60,43 @@ namespace BehaviourTree
             outsideFoodAreaSeq.children.Add(getClosestFoodArea);
             outsideFoodAreaSeq.children.Add(moveToFoodArea);
             
-            var selector = ScriptableObject.CreateInstance<SelectorNode>();
-            selector.children.Add(insideFoodAreaSeq);   
-            selector.children.Add(outsideFoodAreaSeq);   
+            var hungrySelector = ScriptableObject.CreateInstance<SelectorNode>();
+            hungrySelector.children.Add(insideFoodAreaSeq);   
+            hungrySelector.children.Add(outsideFoodAreaSeq);
+            
+            var hungrySeq = ScriptableObject.CreateInstance<SequenceNode>();
+            hungrySeq.children.Add(isHungry);    
+            hungrySeq.children.Add(hungrySelector); 
+            
+            var isTired = ScriptableObject.CreateInstance<IsTired>();
+            var moveToHideOut = ScriptableObject.CreateInstance<MoveToHideout>(); 
+            var rest = ScriptableObject.CreateInstance<Rest>();
+            rest.SetData(5,50,100);
+            
+            var tiresSeq = ScriptableObject.CreateInstance<SequenceNode>();
+            tiresSeq.children.Add(isTired);
+            tiresSeq.children.Add(moveToHideOut);
+            tiresSeq.children.Add(rest);
+            
+            
+            var getWanderPosition = ScriptableObject.CreateInstance<GetNewWanderPosition>();
+            var moveToWanderPosition = ScriptableObject.CreateInstance<MoveToNextTarget>();
+            var restAtWanderPosition = ScriptableObject.CreateInstance<Rest>();
+            restAtWanderPosition.SetData(2,0,10);
+
+            var wanderSequence = ScriptableObject.CreateInstance<SequenceNode>();
+            wanderSequence.children.Add(getWanderPosition); 
+            wanderSequence.children.Add(moveToWanderPosition); 
+            wanderSequence.children.Add(restAtWanderPosition); 
+
+            
+            var mainSelector = ScriptableObject.CreateInstance<SelectorNode>();      
+            mainSelector.children.Add(hungrySeq);
+            mainSelector.children.Add(tiresSeq);
+            mainSelector.children.Add(wanderSequence);
             
             var repeatNode = ScriptableObject.CreateInstance<RepeatNode>();
-            repeatNode.child = selector;
+            repeatNode.child = mainSelector;
             
             rootNode = repeatNode;
             Bind(blackBoard);

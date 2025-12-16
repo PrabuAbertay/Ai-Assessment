@@ -3,7 +3,7 @@ using UnityEngine.AI;
 
 namespace BehaviourTree
 {
-    public class MoveToNextTarget : ActionNode
+    public class MoveToHideout : ActionNode
     {
         private Vector3 target;
         private NavMeshAgent navMeshAgent;
@@ -11,9 +11,9 @@ namespace BehaviourTree
         protected override void OnStart()
         {
             navMeshAgent = blackBoard.agent_BT.NavMeshAgent;
-            target = blackBoard.agent_BT.CurrentMoveToPosition;
-            Debug.Log($"[MoveToNextTarget] OnStart , stopping distance : {navMeshAgent.stoppingDistance}");
-            Debug.DrawLine(blackBoard.agent_BT.transform.position, target, Color.green,1000);
+            target = blackBoard.agent_BT.Hideout.position;
+            Debug.Log($"[MoveToHideout] OnStart , stopping distance : {navMeshAgent.stoppingDistance}");
+            Debug.DrawLine(blackBoard.agent_BT.transform.position, target, Color.red,1000);
                 
             navMeshAgent.isStopped = false; 
             navMeshAgent.destination = target;     

@@ -133,15 +133,24 @@ namespace GOAP
 
         private void UpdateStats()
         {
-            health -= 5;
-            stamina += IsInRange(hideOut.position, 2) ? 5 : -2;  
-            health = math.clamp(health, 0, 100);
-            stamina = math.clamp(stamina, 0, 100);
+            AddHealth(-5);
+            AddStamina(-5);
         }
 
         bool IsInRange(Vector3 position, float range)
         {
             return Vector3.Distance(transform.position, position) < range;
+        }
+
+        void AddHealth(int value)
+        {
+            health += value;
+            health = math.clamp(health, 0, 100);
+        }
+        void AddStamina(int value)
+        {
+            stamina += value;
+            stamina = math.clamp(stamina, 0, 100);
         }
 
         private void SetUpGoals()
@@ -159,18 +168,22 @@ namespace GOAP
             goals.Add(new Goal.Builder(GoapStrings.StayHealthy)
                 .WithPriority(2)
                 .WithDesiredEffects(beliefs[GoapStrings.AgentHealthy]).Build());
+            
+            goals.Add(new Goal.Builder(GoapStrings.StayActive)
+                .WithPriority(2)
+                .WithDesiredEffects(beliefs[GoapStrings.AgentRested]).Build());
         }
 
         private void SetUpActions()
         {
             actions = new HashSet<GoapAction>();   
             
-            actions.Add(new GoapAction.Builder(GoapStrings.Rest)
-                .WithActionStrategy(new IdleStrategy(5))
+            actions.Add(new GoapAction.Builder(GoapStrings.Relax)
+                .WithActionStrategy(new IdleStrategy(2,() => AddStamina(5)))
                 .AddEffects(beliefs[GoapStrings.Nothing]).Build());
             
             actions.Add(new GoapAction.Builder(GoapStrings.WanderAround)
-                .WithActionStrategy(new WanderStrategy(navAgent, 20, hideOut.position))
+                .WithActionStrategy(new WanderStrategy(navAgent, 20, transform.position))
                 .AddEffects(beliefs[GoapStrings.Moving]).Build());
             
             actions.Add(new GoapAction.Builder(GoapStrings.MoveToFoodArea)
@@ -186,6 +199,15 @@ namespace GOAP
                 .WithActionStrategy(new InteractStrategy(2, OnEatCallback))
                 .AddPreConditions(beliefs[GoapStrings.AgentAtFood])
                 .AddEffects(beliefs[GoapStrings.AgentHealthy]).Build());
+            
+            actions.Add(new GoapAction.Builder(GoapStrings.MoveToHideout)
+                .WithActionStrategy(new MoveStrategy(navAgent,() => hideOut.position))
+                .AddEffects(beliefs[GoapStrings.AgentAtHideOut]).Build());
+            
+            actions.Add(new GoapAction.Builder(GoapStrings.Rest)
+                .WithActionStrategy(new IdleStrategy(5,() => AddStamina(80)))
+                .AddPreConditions(beliefs[GoapStrings.AgentAtHideOut])
+                .AddEffects(beliefs[GoapStrings.AgentRested]).Build());
             
         }
 
@@ -222,7 +244,8 @@ namespace GOAP
             }
             
             availableFood.Consumed();
-            health += availableFood.HealthValue;
+            AddHealth(availableFood.HealthValue);
+            AddStamina(2);
             availableFood = null;   
         }
         Vector3 GetClosestFoodSpawnArea()
@@ -279,12 +302,15 @@ namespace GOAP
         public const string AgentAtFood = "AgentAtFood";
         public const string AgentAtHideOut = "AgentAtHideOut";
         public const string Rest = "Rest";
+        public const string Relax = "Relax";
         public const string WanderAround = "WanderAround";
         public const string Wander = "Wander";
         public const string Chill = "Chill";
         public const string MoveToFoodArea = "MoveToFoodArea";
+        public const string MoveToHideout = "MoveToHideout";
         public const string MoveToFood = "MoveToFood";
         public const string StayHealthy = "StayHealthy";
+        public const string StayActive = "StayActive";
         public const string Eat = "Eat";
         
     }
