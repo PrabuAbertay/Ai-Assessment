@@ -20,16 +20,16 @@ namespace GOAP
             beliefs.Add(key, new AgentBelief.Builder(key).WithCondition(condition).Build());
         }
 
-        public void AddBelief(string key, float distance, Transform transform)
+        public void AddLocationBelief(string key, float distance, Transform transform)
         {
-            AddBelief(key,distance,transform.position);
+            AddLocationBelief(key,distance,transform.position);
         }
         
-        public void AddBelief(string key, float distance,Vector3 location)
+        public void AddLocationBelief(string key, float distance,Vector3 location)
         {
             beliefs.Add(key, new AgentBelief.Builder(key)
                 .WithCondition(() => IsInRange(location,distance))
-                .WithLocatoin(()=>location )
+                .WithLocation(()=>location )
                 .Build());
         }
         
@@ -37,10 +37,9 @@ namespace GOAP
         {
             beliefs.Add(key, new AgentBelief.Builder(key)
                 .WithCondition(sensor.IsTargetInRange)
-                .WithLocatoin(sensor.TargetPosition )
+                .WithLocation(sensor.TargetPosition )
                 .Build());
         }
-        
         bool IsInRange(Vector3 position, float range) => Vector3.Distance(position, agent.GetPosition()) < range;
         
     }

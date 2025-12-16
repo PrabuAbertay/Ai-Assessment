@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace GOAP
@@ -16,6 +17,8 @@ namespace GOAP
         
         public Vector3 TargetPosition()=> target?.transform.position ?? Vector3.zero; 
         public bool IsTargetInRange() => TargetPosition()!=Vector3.zero;
+        
+        public event Action<GameObject> OnTargetChanged; 
 
         private void OnValidate()
         {
@@ -54,7 +57,7 @@ namespace GOAP
                 (TargetPosition() != lastKnownPosition || lastKnownPosition != Vector3.zero))
             {
                 lastKnownPosition = target.transform.position;      
-                UpdateTargetPosition();
+                OnTargetChanged?.Invoke(target);
             }
         }
 

@@ -2,42 +2,42 @@ using System.Collections.Generic;
 
 namespace GOAP
 {
-    public class Goals
+    public class Goal
     {
         public string name { get; }
-        public int priority { get; set; }
+        public float priority { get; set; }
 
-        HashSet<AgentBelief> desiredEffects = new HashSet<AgentBelief>();
+        public HashSet<AgentBelief> desiredEffects = new HashSet<AgentBelief>();
 
-        Goals(string name)
+        Goal(string name)
         {
             this.name = name;
         }
 
         public class Builder
         {
-            Goals goals;
+            Goal goal;
 
             public Builder(string name)
             {
-                goals= new Goals(name);
+                goal= new Goal(name);
             }
 
             public Builder WithPriority(int priority)
             {
-                goals.priority = priority;      
+                goal.priority = priority;      
                 return this;
             }
 
             public Builder WithDesiredEffects(AgentBelief desiredEffect)
             {
-                goals.desiredEffects.Add(desiredEffect);
+                goal.desiredEffects.Add(desiredEffect);
                 return this;    
             }
 
-            public Goals Build()
+            public Goal Build()
             {
-                return goals;
+                return goal;
             }
         }
     }

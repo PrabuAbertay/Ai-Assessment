@@ -1,9 +1,11 @@
+using Unity.VisualScripting;
+
 namespace GOAP
 {
     public interface IActionStrategy
     {
-        bool canPerform { get; }
-        bool complete { get; }
+        public bool canPerform { get; }
+        public bool complete { get;}
 
         public void Start()
         {

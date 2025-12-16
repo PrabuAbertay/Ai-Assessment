@@ -32,6 +32,7 @@ namespace Gameplay
             return false;
         }
 
+
         public FoodSpawnArea GetClosestFoodSpawnArea(Vector3 position)
         {
             float closestDistance = float.MaxValue; 

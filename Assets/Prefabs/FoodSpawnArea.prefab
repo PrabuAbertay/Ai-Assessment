@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5392434741881522054}
   m_Layer: 0
   m_Name: FoodSpawnArea
-  m_TagString: Untagged
+  m_TagString: FoodArea
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -67,3 +67,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collider: {fileID: 1221004670040585430}
+  aiAgent: {fileID: 0}

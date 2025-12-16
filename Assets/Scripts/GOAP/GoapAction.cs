@@ -3,17 +3,16 @@ using System.Collections.Generic;
 
 namespace GOAP
 {
-    public class GoapActions
+    public class GoapAction
     {
         public string name { get; }
         public int cost { get; set; }
 
-        private HashSet<AgentBelief> conditions = new HashSet<AgentBelief>();
-        private HashSet<AgentBelief> effects = new HashSet<AgentBelief>();
+        public HashSet<AgentBelief> preConditions = new HashSet<AgentBelief>();
+        public HashSet<AgentBelief> effects = new HashSet<AgentBelief>();
         
         IActionStrategy actionStrategy;
-
-        GoapActions(string name)
+        GoapAction(string name)
         {
             this.name = name;
         }
@@ -40,11 +39,11 @@ namespace GOAP
 
         public class Builder
         {
-            GoapActions goapActions;
+            GoapAction goapAction;
 
             public Builder(string name)
             {
-                goapActions = new GoapActions(name)
+                goapAction = new GoapAction(name)
                 {
                     cost = 1
                 };
@@ -52,31 +51,31 @@ namespace GOAP
 
             public Builder WithCost(int cost)
             {
-                goapActions.cost = cost;
+                goapAction.cost = cost;
                 return this;
             }
 
             public Builder WithActionStrategy(IActionStrategy actionStrategy)
             {
-                goapActions.actionStrategy = actionStrategy;
+                goapAction.actionStrategy = actionStrategy;
                 return this;    
             }
 
             public Builder AddEffects(AgentBelief effects)
             {
-                goapActions.effects.Add(effects);
+                goapAction.effects.Add(effects);
                 return this;
             }
 
-            public Builder AddConditions(AgentBelief conditions)
+            public Builder AddPreConditions(AgentBelief conditions)
             {
-                goapActions.conditions.Add(conditions);
+                goapAction.preConditions.Add(conditions);
                 return this;    
             }
 
-            public GoapActions Build()
+            public GoapAction Build()
             {
-                return goapActions; 
+                return goapAction; 
             }
         }
 

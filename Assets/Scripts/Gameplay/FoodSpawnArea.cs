@@ -17,6 +17,11 @@ namespace Gameplay
             if(collider == null) collider = GetComponent<BoxCollider>();
         }
 
+        private void Start()
+        {
+            UnityEngine.Debug.Log($" Name: {gameObject.name}, extends --------- {collider.bounds.extents.x}, {collider.bounds.extents.y}, {collider.bounds.extents.z}");
+        }
+
         public List<(float,float)> GetRandomPoints(int count)
         {
             List<(float,float)> points = new List<(float,float)>();
@@ -100,6 +105,16 @@ namespace Gameplay
         public Vector3 GetClosestPointInArea(Vector3 position)
         {
             return collider.ClosestPoint(position);
+        }
+
+        public Vector3 GetPosition()
+        {
+            return transform.position;
+        }
+
+        public bool IsInBounds(Vector3 position)
+        {
+            return collider.bounds.Contains(position);
         }
     }
 }

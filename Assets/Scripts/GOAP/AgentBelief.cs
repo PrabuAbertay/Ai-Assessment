@@ -33,7 +33,7 @@ namespace GOAP
                 return this;
             }
         
-            public Builder WithLocatoin(Func<Vector3> location)
+            public Builder WithLocation(Func<Vector3> location)
             {
                 agentBelief.observedLocation = location;
                 return this;
