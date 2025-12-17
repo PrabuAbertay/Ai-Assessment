@@ -11,7 +11,7 @@ namespace Gameplay
         [SerializeField] BoxCollider collider;
 
         List<Food> foods = new List<Food>();
-        [SerializeField]private AiAgent_BT aiAgent;
+        [SerializeField]private List<AiAgent_BT> aiAgents = new List<AiAgent_BT>();
 
         private void OnValidate()
         {
@@ -35,8 +35,12 @@ namespace Gameplay
         public bool Contains(AiAgent_BT agent)
         {
             // Debug.Log($"aiAgent == null : {aiAgent == null}, agent name : {aiAgent.name}");
-            if(aiAgent == null) return false;
-            return aiAgent == agent;
+            if(aiAgents.Count < 1) return false;
+            foreach (var aiAgent in aiAgents)
+            {
+                if(agent == aiAgent) return true;   
+            }
+            return false;
         }
 
         public void SpawnFood(int count, Food food)
@@ -88,7 +92,7 @@ namespace Gameplay
         {
             if (other.CompareTag("AiAgent"))
             {
-                aiAgent = other.GetComponent<AiAgent_BT>();
+                aiAgents.Add(other.GetComponent<AiAgent_BT>());
             }
         }
 
@@ -96,7 +100,7 @@ namespace Gameplay
         {
             if (other.CompareTag("AiAgent"))
             {
-                aiAgent = null;
+                aiAgents.Remove(other.GetComponent<AiAgent_BT>());
             }
         }
 

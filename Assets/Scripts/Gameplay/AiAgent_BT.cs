@@ -18,6 +18,7 @@ public class AiAgent_BT : MonoBehaviour
     [SerializeField]BehaviourTree.BehaviourTree behaviourTree;
     [SerializeField] NavMeshAgent navMeshAgent;
     [SerializeField] private Transform hideOut;
+    [SerializeField] private UiManager uiManager;
     private float statUpdateInterval = 1f;
     private float currentIntervalTime;
 
@@ -61,9 +62,16 @@ public class AiAgent_BT : MonoBehaviour
 
     private void Update()
     {
+        UpdateUi();
         if (!(Time.time - currentIntervalTime >= statUpdateInterval)) return;
         UpdateStats();
         currentIntervalTime = Time.time;
+    }
+
+    private void UpdateUi()
+    {
+        uiManager.UpdateHealthText(health);
+        uiManager.UpdateStaminaText(stamina);
     }
 
     public void SetCurrentFoodSpawnArea(FoodSpawnArea newArea)
@@ -137,8 +145,8 @@ public class AiAgent_BT : MonoBehaviour
 
     public void UpdateStats()
     {
-        AddHealth(-5);
-        AddStamina(-5);
+        AddHealth(-3);
+        AddStamina(-3);
     }
     
     public void AddHealth(int value)
@@ -150,5 +158,10 @@ public class AiAgent_BT : MonoBehaviour
     {
         stamina += value;
         stamina = math.clamp(stamina, 0, 100);
+    }
+
+    public void SetHideout(Hideout hideout)
+    {
+        this.hideOut = hideout.GetTransform(); 
     }
 }

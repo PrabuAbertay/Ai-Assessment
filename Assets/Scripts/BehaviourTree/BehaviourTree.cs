@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using Gameplay;
 using UnityEngine;
+using UnityEngine.Profiling;
+using Random = UnityEngine.Random;
 
 namespace BehaviourTree
 {
@@ -16,6 +18,7 @@ namespace BehaviourTree
         FoodSpawner foodSpawner;
         AiAgent_BT aiAgentBT;
         
+        [SerializeField] MetricsHandler metrics;
 
 
         public void Init(FoodSpawner foodSpawner1, AiAgent_BT agent)
@@ -82,7 +85,8 @@ namespace BehaviourTree
             var getWanderPosition = ScriptableObject.CreateInstance<GetNewWanderPosition>();
             var moveToWanderPosition = ScriptableObject.CreateInstance<MoveToNextTarget>();
             var restAtWanderPosition = ScriptableObject.CreateInstance<Rest>();
-            restAtWanderPosition.SetData(2,0,10);
+            float duration = Random.Range(1, 2);
+            restAtWanderPosition.SetData(duration,0,10);
 
             var wanderSequence = ScriptableObject.CreateInstance<SequenceNode>();
             wanderSequence.children.Add(getWanderPosition); 
@@ -111,6 +115,7 @@ namespace BehaviourTree
         {
             if (rootNode.state == Node.State.Running)
             {
+                float start = Time.realtimeSinceStartup;
                 treeState = rootNode.Update();
             }
             return treeState;

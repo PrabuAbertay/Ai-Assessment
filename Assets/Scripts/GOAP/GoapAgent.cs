@@ -8,7 +8,9 @@ using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Profiling;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace GOAP
 {
@@ -39,7 +41,9 @@ namespace GOAP
         public HashSet<GoapAction> actions = new HashSet<GoapAction>();
         public HashSet<Goal> goals = new HashSet<Goal>();
         [SerializeField]private bool isInFoodArea;
+        [SerializeField]private MetricsHandler metrics;
         private Food availableFood;
+        [SerializeField]private UiManager uiManager;
 
         private void OnValidate()
         {
@@ -62,6 +66,7 @@ namespace GOAP
 
         private void Update()
         {
+            UpdateUi();
             if (currentTime < statsUpdateTimer)
             {
                 currentTime += Time.deltaTime;      
@@ -115,6 +120,12 @@ namespace GOAP
             }
         }
 
+        private void UpdateUi()
+        {
+            uiManager.UpdateHealthText(health);
+            uiManager.UpdateStaminaText(stamina);
+        }
+
         void CalculatePlan()
         {
             var priorityLevel = currentGoal?.priority ?? 0;
@@ -123,18 +134,24 @@ namespace GOAP
 
             if (currentGoal != null)
             {
-                Debug.Log("Current goal != null, checking goals with higher priority");
+                // Debug.Log("Current goal != null, checking goals with higher priority");
                 goalsToCheck = new HashSet<Goal>(goals.Where(g => g.priority > priorityLevel));
             }
-
+            
+            if(goalsToCheck.Count == 0) return;     
+            float start = Time.realtimeSinceStartup;
             var newPlan = planner.Plan(this, goalsToCheck, lastGoal);
-            if(newPlan != null) actionPlan = newPlan;
+            if (newPlan != null)
+            {
+                metrics.SetDecisionTime((Time.realtimeSinceStartup - start) * 1000f); // ms
+                actionPlan = newPlan;
+            }
         }
 
         private void UpdateStats()
         {
-            AddHealth(-5);
-            AddStamina(-5);
+            AddHealth(-3);
+            AddStamina(-3);
         }
 
         bool IsInRange(Vector3 position, float range)
@@ -176,10 +193,11 @@ namespace GOAP
 
         private void SetUpActions()
         {
-            actions = new HashSet<GoapAction>();   
-            
+            actions = new HashSet<GoapAction>();
+
+            float duration = Random.Range(1, 2);
             actions.Add(new GoapAction.Builder(GoapStrings.Relax)
-                .WithActionStrategy(new IdleStrategy(2,() => AddStamina(5)))
+                .WithActionStrategy(new IdleStrategy(duration,() => AddStamina(5)))
                 .AddEffects(beliefs[GoapStrings.Nothing]).Build());
             
             actions.Add(new GoapAction.Builder(GoapStrings.WanderAround)
@@ -228,8 +246,6 @@ namespace GOAP
             factory.AddBelief(GoapStrings.AgentAtFoodArea, () =>isInFoodArea);
             factory.AddBelief(GoapStrings.AgentAtFood, () => (availableFood != null));
             
-            // factory.AddLocationBelief(GoapStrings.AgentAtFoodArea, 3f, GetClosestFoodSpawnArea());
-            // factory.AddLocationBelief(GoapStrings.AgentAtFood, 2f, GetClosestFood());
             factory.AddLocationBelief(GoapStrings.AgentAtHideOut, 3f, hideOut);
             
             
@@ -286,6 +302,11 @@ namespace GOAP
             {
                 isInFoodArea = false;
             }
+        }
+
+        public void SetHideout(Hideout hideout)
+        {
+            hideOut = hideout.GetTransform();
         }
     }
 

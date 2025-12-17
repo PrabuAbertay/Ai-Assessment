@@ -11,7 +11,7 @@ namespace GOAP
         float currentTime = 0;
         float idleDuration = 0;
         event Action OnComplete; 
-        public IdleStrategy(int duration, Action onComplete)
+        public IdleStrategy(float duration, Action onComplete)
         {
             idleDuration = duration;
             OnComplete = onComplete;

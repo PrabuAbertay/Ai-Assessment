@@ -69,7 +69,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 1cb971ebd8cb585408580e4fa8f85364, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -121,10 +121,10 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3871979515641446635}
-  serializedVersion: 5
+  serializedVersion: 4
   m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_Drag: 0
+  m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -175,8 +175,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b047da5de6672f4f8dab36fb5cd730d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: 100
+  stamina: 100
   behaviourTree: {fileID: 4967235212791635452}
   navMeshAgent: {fileID: 6768545521033973764}
+  hideOut: {fileID: 0}
 --- !u!114 &4967235212791635452
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,3 +194,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   treeState: 0
   nodes: []
+  metrics: {fileID: 0}
